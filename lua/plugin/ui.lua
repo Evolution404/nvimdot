@@ -26,14 +26,15 @@ return function(use)
           icons_enabled = true,
           theme = 'onedark',
           disabled_filetypes = {},
-          component_separators = '|',
-          section_separators = {left = '', right = ''}
+          --component_separators = '|',
+          component_separators = {left = '', right = ''},
+          section_separators = {left = '', right = ''},
         },
         sections = {
-          lualine_a = {'mode'},
+          lualine_a = {{'mode', fmt = function(str) return str:sub(1,1) end}},
           lualine_b = {{'branch'}, {'diff'}},
           lualine_c = {
-            {gps.get_location, condition = gps.is_available}, {'lsp_progress'}
+            {'filename', path = 1}, {gps.get_location, condition = gps.is_available}, {'lsp_progress'}
           },
           lualine_x = {
             {
@@ -47,17 +48,16 @@ return function(use)
             },
           },
           lualine_y = {'filetype', 'encoding', 'fileformat'},
-          lualine_z = {'progress', 'location'}
+          lualine_z = {{'progress', padding = 0}, {'%L'}, {"os.date('%H:%M')"}}
         },
         inactive_sections = {
           lualine_a = {},
           lualine_b = {},
           lualine_c = {'filename'},
-          lualine_x = {'location'},
+          lualine_x = {'location', '%L'},
           lualine_y = {},
           lualine_z = {}
         },
-        tabline = {},
         extensions = {}
       }
     end
