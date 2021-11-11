@@ -123,6 +123,13 @@ return function(use)
     end
   }
 
+  -- 切换buffer的映射
+  vim.cmd[[
+    nnoremap <silent><leader>j :BufferLineCycleNext<CR>
+    nnoremap <silent><leader>k :BufferLineCyclePrev<CR>
+    nnoremap <silent><leader>> :BufferLineMoveNext<CR>
+    nnoremap <silent><leader>< :BufferLineMovePrev<CR>
+  ]]
   use{'akinsho/bufferline.nvim',
     opt = true,
     event = 'BufRead',
