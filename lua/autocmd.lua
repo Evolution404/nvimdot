@@ -10,8 +10,9 @@ vim.cmd[[
 
   augroup wins
     autocmd!
-    autocmd WinEnter,BufEnter,InsertLeave * if ! &cursorline && &filetype !~# '^\(dashboard\|clap_\)' && ! &pvw | setlocal cursorline | endif
-    autocmd WinLeave,BufLeave,InsertEnter * if &cursorline && &filetype !~# '^\(dashboard\|clap_\)' && ! &pvw | setlocal nocursorline | endif
+    " 只有正在活动的窗口才高亮当前行
+    autocmd WinEnter,BufEnter,InsertLeave * if &filetype !~# '^\(dashboard\|clap_\)' | setlocal cursorline | endif
+    autocmd WinLeave,BufLeave,InsertEnter * if &filetype !~# '^\(dashboard\|clap_\)' | setlocal nocursorline | endif
     autocmd FocusGained * checktime
     autocmd VimResized * tabdo wincmd =
   augroup END
