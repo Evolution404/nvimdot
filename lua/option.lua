@@ -18,4 +18,3 @@ option.expandtab = true
 option.wrap = false
 option.termguicolors = true
 option.undofile = true
---option.shada = "!,'300,<50,@100,s10,h"
