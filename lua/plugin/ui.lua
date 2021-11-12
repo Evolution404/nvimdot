@@ -206,10 +206,14 @@ return function(use)
           -- 在hunk之间前后跳转
           ['n ]g'] = { expr = true, "&diff ? ']g' : '<cmd>lua require\"gitsigns\".next_hunk()<CR>'" },
           ['n [g'] = { expr = true, "&diff ? '[g' : '<cmd>lua require\"gitsigns\".prev_hunk()<CR>'" },
-          -- 保存或撤销暂存区
+          -- 保存到暂存区
           ['n <leader>hs'] = '<cmd>lua require"gitsigns".stage_hunk()<CR>',
           ['v <leader>hs'] = '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
+          ['n <leader>hS'] = '<cmd>lua require"gitsigns".stage_buffer()<CR>',
+          -- 撤销对暂存区的修改
           ['n <leader>hu'] = '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>',
+          -- 将当前文件的暂存区内容恢复为版本库内容
+          ['n <leader>hU'] = '<cmd>lua require"gitsigns".reset_buffer_index()<CR>',
           -- 将编辑内容恢复到git暂存区内容，可以恢复一个hunk或者恢复整个文件
           ['n <leader>hr'] = '<cmd>lua require"gitsigns".reset_hunk()<CR>',
           ['v <leader>hr'] = '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
