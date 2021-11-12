@@ -301,6 +301,14 @@ return function(use)
     after = 'nvim-gps',
   }
 
-  use{'glepnir/dashboard-nvim',opt = true, event = "BufWinEnter"}
+  use{'glepnir/dashboard-nvim',
+    opt = true,
+    event = "BufWinEnter",
+    setup = function()
+       vim.g.dashboard_default_executive = 'telescope'
+    end,
+    config = function()
+    end
+  }
 
 end
