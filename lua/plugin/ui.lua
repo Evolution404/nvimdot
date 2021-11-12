@@ -20,6 +20,7 @@ return function(use)
   -- 用于支持特殊符号
   use 'kyazdani42/nvim-web-devicons'
 
+  -- 底部显示的状态栏插件
   use{'hoob3rt/lualine.nvim',
     opt = true,
     after = 'lualine-lsp-progress',
@@ -27,15 +28,18 @@ return function(use)
       local gps = require("nvim-gps")
       require('lualine').setup {
         options = {
-          icons_enabled = true,
+          -- 状态栏的配色方案
           theme = 'onedark',
-          disabled_filetypes = {},
-          --component_separators = '|',
+          -- 组件之间使用圆滑的分隔符，默认是尖锐的分隔符
           component_separators = {left = '', right = ''},
           section_separators = {left = '', right = ''},
         },
         sections = {
-          lualine_a = {{'mode', fmt = function(str) return str:sub(1,1) end}},
+          -- a部分：显示vim的当前模式，只展示模式名称的第一个字母
+          lualine_a = {
+            {'mode', fmt = function(str) return str:sub(1,1) end}
+          },
+          -- b部分：显示分支名称和文件变动信息
           lualine_b = {
             'branch',
             {
@@ -54,10 +58,15 @@ return function(use)
                 end
                 return dict
               end
-            }},
-          lualine_c = {
-            {'filename', path = 1}, {gps.get_location, condition = gps.is_available}, {'lsp_progress'}
+            }
           },
+          -- c部分：显示文件名，路径位置，lsp进度
+          lualine_c = {
+            {'filename', path = 1},
+            {gps.get_location, condition = gps.is_available},
+            {'lsp_progress'},
+          },
+          -- x部分：显示诊断信息
           lualine_x = {
             {
               'diagnostics',
@@ -69,18 +78,15 @@ return function(use)
               symbols = {error = ' ', warn = ' ', info = ' '}
             },
           },
+          -- y部分：显示文件类型，文件编码，文件格式
           lualine_y = {'filetype', 'encoding', 'fileformat'},
+          -- z部分：显示光标进度，文件总行数，当前时间
           lualine_z = {{'progress', padding = 0}, {'%L'}, {"os.date('%H:%M')"}}
         },
+        -- 不活跃窗口显示光标位置和文件总行数
         inactive_sections = {
-          lualine_a = {},
-          lualine_b = {},
-          lualine_c = {'filename'},
           lualine_x = {'location', '%L'},
-          lualine_y = {},
-          lualine_z = {}
         },
-        extensions = {}
       }
     end
   }
