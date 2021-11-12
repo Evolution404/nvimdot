@@ -3,7 +3,7 @@ option.mouse = "a"
 option.number = true
 option.hidden = true
 --option.relativenumber = true
-option.cursorcolumn = true
+--option.cursorcolumn = true
 option.cursorline = true
 option.swapfile = false
 -- 刚打开文件时禁用所有折叠
