@@ -1,10 +1,11 @@
 local set_keymap = vim.api.nvim_set_keymap
 
 return function(use)
+  -- 之前使用的gruvbox配色
   --use{'morhetz/gruvbox',config=function()
   --  vim.cmd[[colorscheme gruvbox]]
   --end}
-  use 'kyazdani42/nvim-web-devicons' -- 支持特殊符号
+  -- 当前使用edge配色
   use {'sainnhe/edge',
     config = function()
       vim.g.edge_style = "aura"
@@ -16,6 +17,8 @@ return function(use)
       vim.cmd[[colorscheme edge]]
     end
   }
+  -- 用于支持特殊符号
+  use 'kyazdani42/nvim-web-devicons'
 
   use{'hoob3rt/lualine.nvim',
     opt = true,
