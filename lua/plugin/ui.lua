@@ -231,36 +231,48 @@ return function(use)
     opt = true,
     event = 'BufRead',
     config = function()
-      vim.cmd [[highlight IndentTwo guifg=#D08770 guibg=NONE gui=nocombine]]
-      vim.cmd [[highlight IndentThree guifg=#EBCB8B guibg=NONE gui=nocombine]]
-      vim.cmd [[highlight IndentFour guifg=#A3BE8C guibg=NONE gui=nocombine]]
-      vim.cmd [[highlight IndentFive guifg=#5E81AC guibg=NONE gui=nocombine]]
-      vim.cmd [[highlight IndentSix guifg=#88C0D0 guibg=NONE gui=nocombine]]
-      vim.cmd [[highlight IndentSeven guifg=#B48EAD guibg=NONE gui=nocombine]]
-      vim.g.indent_blankline_char_highlight_list = {
-        "IndentTwo", "IndentThree", "IndentFour", "IndentFive", "IndentSix",
-        "IndentSeven"
-      }
+      -- 定义各个缩进标记线的颜色
+      vim.cmd[[
+        augroup indentBlanklineCharColor
+          autocmd ColorScheme * highlight IndentCurrent guifg=#EC7279 guibg=NONE gui=nocombine
+          autocmd ColorScheme * highlight IndentTwo guifg=#D08770 guibg=NONE gui=nocombine
+          autocmd ColorScheme * highlight IndentThree guifg=#EBCB8B guibg=NONE gui=nocombine
+          autocmd ColorScheme * highlight IndentFour guifg=#A3BE8C guibg=NONE gui=nocombine
+          autocmd ColorScheme * highlight IndentFive guifg=#5E81AC guibg=NONE gui=nocombine
+          autocmd ColorScheme * highlight IndentSix guifg=#88C0D0 guibg=NONE gui=nocombine
+          autocmd ColorScheme * highlight IndentSeven guifg=#B48EAD guibg=NONE gui=nocombine
+        augroup END
+        " 在加载插件之后可能没有发生配色切换，所以手动触发
+        doautocmd indentBlanklineCharColor ColorScheme
+      ]]
       require("indent_blankline").setup {
         char = "│",
-        show_first_indent_level = true,
+        char_highlight_list = {
+          "IndentTwo", "IndentThree", "IndentFour",
+          "IndentFive", "IndentSix", "IndentSeven"
+        },
+        -- 禁用标记线的文件类型
         filetype_exclude = {
           "startify", "dashboard", "dotooagenda", "log", "fugitive",
           "gitcommit", "packer", "vimwiki", "markdown", "json", "txt",
           "vista", "help", "todoist", "NvimTree", "peekaboo", "git",
           "TelescopePrompt", "undotree", "flutterToolsOutline", "" -- for all buffers without a file type
         },
+        -- 禁用标记线的buffer类型
         buftype_exclude = {"terminal", "nofile"},
+        -- 禁用空白行显示标记线(如果空白行真有空格还是会显示)
         show_trailing_blankline_indent = false,
+        -- 特殊处理当前所在的层级标记线
         show_current_context = true,
+        -- 当前层级标记线变红
+        context_highlight_list = {'IndentCurrent'},
+        -- 当前层级标记线变粗
+        context_char = '┃',
         context_patterns = {
           "class", "function", "method", "block", "list_literal", "selector",
-          "^if", "^table", "if_statement", "while", "for", "type", "var",
-          "import"
+          "^if", "^table", "if_statement", "while", "for", "type", "var", "import"
         }
       }
-      -- because lazy load indent-blankline so need readd this autocmd
-      vim.cmd('autocmd CursorMoved * IndentBlanklineRefresh')
     end
   }
 
