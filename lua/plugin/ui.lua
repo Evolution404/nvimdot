@@ -286,12 +286,6 @@ return function(use)
     config = function() require('zen-mode').setup {} end
   }
 
-  use{'folke/twilight.nvim',
-    opt = true,
-    cmd = {'Twilight', 'TwilightEnable'},
-    config = function() require('twilight').setup {} end
-  }
-
   use{'arkav/lualine-lsp-progress',
     opt = true,
     after = 'nvim-gps',
