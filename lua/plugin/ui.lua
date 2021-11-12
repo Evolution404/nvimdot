@@ -14,7 +14,8 @@ return function(use)
       vim.g.edge_better_performance = 1
       vim.cmd [[set background=dark]]
       vim.cmd[[colorscheme edge]]
-    end}
+    end
+  }
 
   use{'hoob3rt/lualine.nvim',
     opt = true,
