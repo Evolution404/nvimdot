@@ -21,11 +21,6 @@ return function(use)
           \   )
           \ ])
       
-        "highlight WilderDefault        guifg=#c5cdd9 guibg=#363a49
-        "highlight WilderAccent         guifg=#f4468f guibg=#363a49
-        highlight WilderAccent         guifg=#f4468f
-        highlight WilderSelected       guifg=White   guibg=#a0c980 gui=italic
-        highlight WilderSelectedAccent guifg=Red     guibg=#a0c980 gui=italic
         " 由于切换配色方案后自定义高亮会失效
         " 所以定义自动命令在切换配色方案后自动重新定义高亮
         augroup wilderColor
@@ -36,6 +31,8 @@ return function(use)
           autocmd ColorScheme * highlight WilderSelected       guifg=White   guibg=#a0c980 gui=italic
           autocmd ColorScheme * highlight WilderSelectedAccent guifg=Red     guibg=#a0c980 gui=italic
         augroup END
+        " 在加载插件之后可能没有发生配色切换，所以手动触发
+        doautocmd wilderColor ColorScheme
         call wilder#set_option('renderer', wilder#popupmenu_renderer(wilder#popupmenu_border_theme({
           \ 'highlights': {
           \   'default': 'WilderDefault',
