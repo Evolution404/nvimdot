@@ -188,21 +188,19 @@ return function(use)
       })
     end
   }
+  -- session操作，手动保存或恢复
+  vim.cmd[[
+    nnoremap <silent><leader>ss :SaveSession<CR>
+    nnoremap <silent><leader>sr :RestoreSession<CR>
+    nnoremap <silent><leader>sd :DeleteSession<CR>
+  ]]
   use{'rmagatti/auto-session',
     opt = true,
     cmd = {'SaveSession', 'RestoreSession', 'DeleteSession'},
     config = function()
-      local opts = {
-        log_level = 'info',
-        auto_session_enable_last_session = true,
-        auto_session_root_dir = sessions_dir,
-        auto_session_enabled = true,
-        auto_save_enabled = true,
-        auto_restore_enabled = true,
-        auto_session_suppress_dirs = nil
-      }
-
-      require('auto-session').setup(opts)
+      require('auto-session').setup({
+        log_level = 'error',
+      })
     end
   }
   -- 浮动终端
