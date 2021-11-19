@@ -13,7 +13,10 @@ function get_modules()
   local tmp = vim.split(vim.fn.globpath(plugins_dir, '*.lua'), '\n')
   for _, f in ipairs(tmp) do
     -- 将文件名处理成可以直接加载的模块名称
+    -- "123456":sub(2,-3)的结果为 234
     -- 例如：~/.config/nvim/lua/plugin/tool.lua -> plugin/tool
+    -- #plugins_dir-6 代表去掉开头的 ~/.config/nvim/lua/ 这些多余内容
+    -- -5 代表去掉 .lua 后缀
     module_name = f:sub(#plugins_dir - 6, -5)
     modules[#modules + 1] = require(module_name)
   end
