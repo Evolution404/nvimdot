@@ -106,12 +106,7 @@ return function(use)
 					buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", map_opts)
 					buf_set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", map_opts)
 					buf_set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", map_opts)
-					buf_set_keymap(
-						"n",
-						"<leader>ca",
-						"<cmd>lua vim.lsp.buf.code_action()<CR><cmd>lua require'nvim-lightbulb'.update_lightbulb()<CR>",
-						map_opts
-					)
+					buf_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", map_opts)
 					buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", map_opts)
 					--buf_set_keymap('n', '<leader>n', '<cmd>lua vim.lsp.buf.formatting()<CR>', map_opts)
 				end
