@@ -92,7 +92,7 @@ return function(use)
   }
 
   -- <leader>f打开文件浏览器
-  set_keymap("n","<leader>f", ":NvimTreeToggle<cr>", {noremap=true,silent=true})
+  set_keymap("n","<leader>f", ":NvimTreeToggle<cr>", {noremap=true, silent=true})
   use{'kyazdani42/nvim-tree.lua',
     opt = true,
     cmd = {'NvimTreeToggle', 'NvimTreeOpen'},
@@ -290,6 +290,8 @@ return function(use)
     end
   }
 
+  -- 快捷键zm启动ZemMode
+  set_keymap("n","zm", ":ZenMode<cr>", {noremap=true,silent=true})
   use{'folke/zen-mode.nvim',
     opt = true,
     cmd = 'ZenMode',
