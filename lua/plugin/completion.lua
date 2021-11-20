@@ -59,7 +59,7 @@ return function(use)
 							telemetry = { enable = false },
 						},
 					}
-					--elseif (server.name == "clangd") then
+					--elseif (server.name == "gopls") then
 				end
 				-- 配置服务端的兼容性
 				local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -103,10 +103,16 @@ return function(use)
 						"<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>",
 						map_opts
 					)
-					buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", map_opts)
 					buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", map_opts)
 					buf_set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", map_opts)
 					buf_set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", map_opts)
+					buf_set_keymap(
+						"n",
+						"<leader>ca",
+						"<cmd>lua vim.lsp.buf.code_action()<CR><cmd>lua require'nvim-lightbulb'.update_lightbulb()<CR>",
+						map_opts
+					)
+					buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", map_opts)
 					--buf_set_keymap('n', '<leader>n', '<cmd>lua vim.lsp.buf.formatting()<CR>', map_opts)
 				end
 				server:setup(opts)
