@@ -231,7 +231,7 @@ return function(use)
           -- 对比当前hunk所做的修改
           ['n <leader>hp'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
           -- 查看产生当前行的提交
-          ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line(true)<CR>',
+          ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line({full=true, ignore_whitespace=true})<CR>',
           -- 定义文本对象
           ['o ih'] = ':<C-U>lua require"gitsigns".select_hunk()<CR>',
           ['x ih'] = ':<C-U>lua require"gitsigns".select_hunk()<CR>'

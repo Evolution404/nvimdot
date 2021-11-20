@@ -18,76 +18,33 @@ return function(use)
       if not packer_plugins["lspsaga.nvim"].loaded then
         vim.cmd [[packadd lspsaga.nvim]]
       end
+    end
+  }
 
-      local nvim_lsp = require("lspconfig")
+  use{'williamboman/nvim-lsp-installer',
+    opt = true,
+    after = 'nvim-lspconfig',
+    config = function()
       local lsp_installer = require("nvim-lsp-installer")
 
       lsp_installer.settings {
         ui = {
           icons = {
-            server_installed = "✓",
-            server_pending = "➜",
-            server_uninstalled = "✗"
-          }
-        }
+            server_installed = "",
+            server_pending = "",
+            server_uninstalled = "",
+          },
+        },
       }
-
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-
-      capabilities.textDocument.completion.completionItem.documentationFormat = {
-        "markdown",
-        "plaintext"
-      }
-      capabilities.textDocument.completion.completionItem.snippetSupport = true
-      capabilities.textDocument.completion.completionItem.preselectSupport = true
-      capabilities.textDocument.completion.completionItem.insertReplaceSupport = true
-      capabilities.textDocument.completion.completionItem.labelDetailsSupport = true
-      capabilities.textDocument.completion.completionItem.deprecatedSupport = true
-      capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
-      capabilities.textDocument.completion.completionItem.tagSupport = {valueSet = {1}}
-      capabilities.textDocument.completion.completionItem.resolveSupport = {
-        properties = {"documentation", "detail", "additionalTextEdits"}
-      }
-
-      local function custom_attach()
-        require("lsp_signature").on_attach({
-          bind = true,
-          use_lspsaga = false,
-          floating_window = true,
-          fix_pos = true,
-          hint_enable = true,
-          hi_parameter = "Search",
-          handler_opts = {"double"}
-        })
-      end
-
-      local function switch_source_header_splitcmd(bufnr, splitcmd)
-        bufnr = nvim_lsp.util.validate_bufnr(bufnr)
-        local params = {uri = vim.uri_from_bufnr(bufnr)}
-        vim.lsp.buf_request(
-          bufnr,
-          "textDocument/switchSourceHeader",
-          params,
-          function(err, result)
-            if err then
-              error(tostring(err))
-            end
-            if not result then
-              print("Corresponding file can’t be determined")
-              return
-            end
-            vim.api.nvim_command(splitcmd .. " " .. vim.uri_to_fname(result))
-          end
-        )
-      end
-
+      -- 服务端启动后执行内部的回调函数
       lsp_installer.on_server_ready(
         function(server)
           local opts = {}
-
+          -- 通过判断服务端名称来单独配置各个服务端
           if (server.name == "sumneko_lua") then
             opts.settings = {
               Lua = {
+                -- 避免对配置文件里的vim和packer_plugins变量报错
                 diagnostics = {globals = {"vim", "packer_plugins"}},
                 workspace = {
                   library = {
@@ -97,41 +54,47 @@ return function(use)
                   maxPreload = 100000,
                   preloadFileSize = 10000
                 },
+                -- 禁止发送统计数据
                 telemetry = {enable = false}
               }
             }
-          elseif (server.name == "clangd") then
-            opts.commands = {
-              ClangdSwitchSourceHeader = {
-                function()
-                  switch_source_header_splitcmd(0, "edit")
-                end,
-                description = "Open source/header in current buffer"
-              },
-              ClangdSwitchSourceHeaderVSplit = {
-                function()
-                  switch_source_header_splitcmd(0, "vsplit")
-                end,
-                description = "Open source/header in a new vsplit"
-              },
-              ClangdSwitchSourceHeaderSplit = {
-                function()
-                  switch_source_header_splitcmd(0, "split")
-                end,
-                description = "Open source/header in a new split"
-              }
-            }
+          --elseif (server.name == "clangd") then
           end
+          -- 配置服务端的兼容性
+          local capabilities = vim.lsp.protocol.make_client_capabilities()
+          local completionItem = capabilities.textDocument.completion.completionItem
+          completionItem.documentationFormat = {
+            "markdown",
+            "plaintext"
+          }
+          completionItem.snippetSupport = true
+          completionItem.preselectSupport = true
+          completionItem.insertReplaceSupport = true
+          completionItem.labelDetailsSupport = true
+          completionItem.deprecatedSupport = true
+          completionItem.commitCharactersSupport = true
+          completionItem.tagSupport = {valueSet = {1}}
+          completionItem.resolveSupport = {
+            properties = {"documentation", "detail", "additionalTextEdits"}
+          }
           opts.capabilities = capabilities
           opts.flags = {debounce_text_changes = 500}
-          opts.on_attach = custom_attach
-
+          opts.on_attach = function()
+            require("lsp_signature").on_attach({
+              bind = true,
+              use_lspsaga = false,
+              floating_window = true,
+              fix_pos = true,
+              hint_enable = true,
+              hi_parameter = "Search",
+              handler_opts = {"double"}
+            })
+          end
           server:setup(opts)
         end
       )
     end
   }
-  use{'williamboman/nvim-lsp-installer', opt = true, after = 'nvim-lspconfig'}
   use{'tami5/lspsaga.nvim', opt = true, after = 'nvim-lspconfig'}
   use{'kosayoda/nvim-lightbulb',
       opt = true,
@@ -144,91 +107,90 @@ return function(use)
   }
   use{'ray-x/lsp_signature.nvim', opt = true, after = 'nvim-lspconfig'}
   use{'hrsh7th/nvim-cmp',
-      event = 'InsertEnter',
-      requires = {
-          {'saadparwaiz1/cmp_luasnip', after = 'LuaSnip'},
-          {'hrsh7th/cmp-buffer', after = 'cmp_luasnip'},
-          {'hrsh7th/cmp-nvim-lsp', after = 'cmp-buffer'},
-          {'hrsh7th/cmp-nvim-lua', after = 'cmp-nvim-lsp'},
-          {'andersevenrud/compe-tmux', branch = 'cmp', after = 'cmp-nvim-lua'},
-          {'hrsh7th/cmp-path', after = 'compe-tmux'},
-          {'f3fora/cmp-spell', after = 'cmp-path'}
-          -- {
-          --     'tzachar/cmp-tabnine',
-          --     run = './install.sh',
-          --     after = 'cmp-spell',
-          --     config = conf.tabnine
-          -- }
-      },
-      config = function()
-        local t = function(str)
-          return vim.api.nvim_replace_termcodes(str, true, true, true)
+    event = 'InsertEnter',
+    requires = {
+      {'saadparwaiz1/cmp_luasnip', after = 'LuaSnip'},
+      {'hrsh7th/cmp-buffer', after = 'cmp_luasnip'},
+      {'hrsh7th/cmp-nvim-lsp', after = 'cmp-buffer'},
+      {'hrsh7th/cmp-nvim-lua', after = 'cmp-nvim-lsp'},
+      {'andersevenrud/compe-tmux', branch = 'cmp', after = 'cmp-nvim-lua'},
+      {'hrsh7th/cmp-path', after = 'compe-tmux'},
+      {'f3fora/cmp-spell', after = 'cmp-path'}
+      -- {
+      --     'tzachar/cmp-tabnine',
+      --     run = './install.sh',
+      --     after = 'cmp-spell',
+      --     config = conf.tabnine
+      -- }
+    },
+    config = function()
+      local t = function(str)
+        return vim.api.nvim_replace_termcodes(str, true, true, true)
+      end
+      local has_words_before = function()
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        if col == 0 then
+          return false
         end
-        local has_words_before = function()
-          local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-          if col == 0 then
-            return false
-          end
-          return vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-        end
+        return vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+      end
 
-    local cmp = require("cmp")
-    cmp.setup {
-      formatting = {
+      local cmp = require("cmp")
+      cmp.setup {
+        formatting = {
           format = function(entry, vim_item)
-              local lspkind_icons = {
-                  Text = "",
-                  Method = "",
-                  Function = "",
-                  Constructor = "",
-                  Field = "ﰠ",
-                  Variable = "",
-                  Class = "ﴯ",
-                  Interface = "",
-                  Module = "",
-                  Property = "ﰠ",
-                  Unit = "塞",
-                  Value = "",
-                  Enum = "",
-                  Keyword = "",
-                  Snippet = "",
-                  Color = "",
-                  File = "",
-                  Reference = "",
-                  Folder = "",
-                  EnumMember = "",
-                  Constant = "",
-                  Struct = "פּ",
-                  Event = "",
-                  Operator = "",
-                  TypeParameter = ""
-              }
-              -- load lspkind icons
-              vim_item.kind =
-                  string.format(
-                  "%s %s",
-                  lspkind_icons[vim_item.kind],
-                  vim_item.kind
-              )
+            local lspkind_icons = {
+              Text = "",
+              Method = "",
+              Function = "",
+              Constructor = "",
+              Field = "ﰠ",
+              Variable = "",
+              Class = "ﴯ",
+              Interface = "",
+              Module = "",
+              Property = "ﰠ",
+              Unit = "塞",
+              Value = "",
+              Enum = "",
+              Keyword = "",
+              Snippet = "",
+              Color = "",
+              File = "",
+              Reference = "",
+              Folder = "",
+              EnumMember = "",
+              Constant = "",
+              Struct = "פּ",
+              Event = "",
+              Operator = "",
+              TypeParameter = ""
+            }
+            -- load lspkind icons
+            vim_item.kind =
+              string.format(
+              "%s %s",
+              lspkind_icons[vim_item.kind],
+              vim_item.kind
+            )
 
-              vim_item.menu =
-                  ({
-                  -- cmp_tabnine = "[TN]",
-                  orgmode = "[ORG]",
-                  nvim_lsp = "[LSP]",
-                  nvim_lua = "[Lua]",
-                  buffer = "[BUF]",
-                  path = "[PATH]",
-                  tmux = "[TMUX]",
-                  luasnip = "[SNIP]",
-                  spell = "[SPELL]"
-              })[entry.source.name]
+            vim_item.menu = ({
+              -- cmp_tabnine = "[TN]",
+              orgmode = "[ORG]",
+              nvim_lsp = "[LSP]",
+              nvim_lua = "[Lua]",
+              buffer = "[BUF]",
+              path = "[PATH]",
+              tmux = "[TMUX]",
+              luasnip = "[SNIP]",
+              spell = "[SPELL]"
+            })[entry.source.name]
 
-              return vim_item
+            return vim_item
           end
-      },
-      -- You can set mappings if you want
-      mapping = {
+        },
+        -- You can set mappings if you want
+        mapping = {
           ["<CR>"] = cmp.mapping.confirm({select = true}),
           ["<C-p>"] = cmp.mapping.select_prev_item(),
           ["<C-n>"] = cmp.mapping.select_next_item(),
@@ -271,26 +233,26 @@ return function(use)
               fallback()
             end
           end
-      },
-      snippet = {
-        expand = function(args)
-          require("luasnip").lsp_expand(args.body)
-        end
-      },
-      -- You should specify your *installed* sources.
-      sources = {
-        {name = "nvim_lsp"},
-        {name = "nvim_lua"},
-        {name = "luasnip"},
-        {name = "buffer"},
-        {name = "path"},
-        {name = "spell"},
-        {name = "tmux"},
-        {name = "orgmode"}
-        -- {name = 'cmp_tabnine'},
+        },
+        snippet = {
+          expand = function(args)
+            require("luasnip").lsp_expand(args.body)
+          end
+        },
+        -- You should specify your *installed* sources.
+        sources = {
+          {name = "nvim_lsp"},
+          {name = "nvim_lua"},
+          {name = "luasnip"},
+          {name = "buffer"},
+          {name = "path"},
+          {name = "spell"},
+          {name = "tmux"},
+          {name = "orgmode"}
+          -- {name = 'cmp_tabnine'},
+        }
       }
-    }
-      end
+    end
   }
   use{'L3MON4D3/LuaSnip',
       after = 'nvim-cmp',
