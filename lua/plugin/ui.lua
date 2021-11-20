@@ -334,7 +334,7 @@ return function(use)
 		end,
 	})
 
-	-- 快捷键zm启动ZemMode
+	-- 快捷键zm启动ZenMode，继续使用zm可以退出ZenMode
 	set_keymap("n", "zm", ":ZenMode<cr>", { noremap = true, silent = true })
 	use({
 		"folke/zen-mode.nvim",
