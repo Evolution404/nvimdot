@@ -1,4 +1,4 @@
-vim.cmd[[
+vim.cmd([[
   augroup buf
     autocmd!
     " 打开文件时自动恢复到上次位置
@@ -25,4 +25,4 @@ vim.cmd[[
   augroup filetype
     autocmd!
   augroup END
-]]
+]])
