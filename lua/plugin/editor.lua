@@ -1,3 +1,4 @@
+local set_keymap = vim.api.nvim_set_keymap
 return function(use)
   use{'simrat39/symbols-outline.nvim',
     opt = true,
@@ -234,7 +235,7 @@ return function(use)
   local function dap_config()
     local dap = require("dap")
 
-    dap.adapters.go = function(callback, config)
+    dap.adapters.go = function(callback, _)
       local stdout = vim.loop.new_pipe(false)
       local handle
       local pid_or_err
@@ -272,7 +273,7 @@ return function(use)
         request = "launch",
         mode = "test",
         program = "${file}"
-      }, -- works with go.mod packages and sub packages 
+      }, -- works with go.mod packages and sub packages
       {
         type = "go",
         name = "Debug test (go.mod)",
@@ -313,24 +314,18 @@ return function(use)
       }
     }
   end
-  local function dapinstal_config()
-    require("dap-install").setup({
-      installation_path = dap_dir,
-      verbosely_call_debuggers = false
-    })
-  end
   use{'rcarriga/nvim-dap-ui',
     opt = false,
     requires = {
       {
-        'mfussenegger/nvim-dap', 
+        'mfussenegger/nvim-dap',
         config = dap_config
-      }, 
+      },
       {
         'Pocco81/DAPInstall.nvim',
         opt = true,
         cmd = {'DIInstall', 'DIUninstall', 'DIList'},
-        config = dapinstall_config
+        --config = dapinstall_config
       }
     },
     config = function()
@@ -409,6 +404,7 @@ return function(use)
     opt = true,
     after = 'nvim-treesitter'
   }
+  set_keymap("n","<leader>n", ":Neoformat<cr>", {noremap=true, silent=true})
   use{'sbdchd/neoformat',opt = true, cmd = 'Neoformat'}
   use{'rhysd/accelerated-jk',opt = true}
   use{'hrsh7th/vim-eft',opt = true}
