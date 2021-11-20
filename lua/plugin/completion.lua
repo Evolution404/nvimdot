@@ -59,28 +59,30 @@ return function(use)
 							telemetry = { enable = false },
 						},
 					}
-					--elseif (server.name == "gopls") then
+				elseif server.name == "gopls" then
+					-- 单个go文件也启用lsp
+					opts.single_file_support = true
 				end
 				-- 配置服务端的兼容性
-				local capabilities = vim.lsp.protocol.make_client_capabilities()
-				local completionItem = capabilities.textDocument.completion.completionItem
-				completionItem.documentationFormat = {
-					"markdown",
-					"plaintext",
-				}
-				completionItem.snippetSupport = true
-				completionItem.preselectSupport = true
-				completionItem.insertReplaceSupport = true
-				completionItem.labelDetailsSupport = true
-				completionItem.deprecatedSupport = true
-				completionItem.commitCharactersSupport = true
-				completionItem.tagSupport = { valueSet = { 1 } }
-				completionItem.resolveSupport = {
-					properties = { "documentation", "detail", "additionalTextEdits" },
-				}
-				opts.capabilities = capabilities
+				--local capabilities = vim.lsp.protocol.make_client_capabilities()
+				--local completionItem = capabilities.textDocument.completion.completionItem
+				--completionItem.documentationFormat = {
+				--	"markdown",
+				--	"plaintext",
+				--}
+				--completionItem.snippetSupport = true
+				--completionItem.preselectSupport = true
+				--completionItem.insertReplaceSupport = true
+				--completionItem.labelDetailsSupport = true
+				--completionItem.deprecatedSupport = true
+				--completionItem.commitCharactersSupport = true
+				--completionItem.tagSupport = { valueSet = { 1 } }
+				--completionItem.resolveSupport = {
+				--	properties = { "documentation", "detail", "additionalTextEdits" },
+				--}
+				--opts.capabilities = capabilities
 				opts.flags = { debounce_text_changes = 500 }
-				opts.on_attach = function(_, bufnr)
+				opts.on_attach = function()
 					require("lsp_signature").on_attach({
 						bind = true,
 						use_lspsaga = false,
@@ -90,25 +92,21 @@ return function(use)
 						hi_parameter = "Search",
 						handler_opts = { "double" },
 					})
-					local function buf_set_keymap(...)
-						vim.api.nvim_buf_set_keymap(bufnr, ...)
+					local function set_key_map(mode, lhs, rhs)
+						vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, { noremap = true, silent = true })
 					end
-					local map_opts = { noremap = true, silent = true }
-					buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", map_opts)
-					buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", map_opts)
-					buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", map_opts)
-					buf_set_keymap(
-						"n",
-						"<leader>wl",
-						"<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>",
-						map_opts
-					)
-					buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", map_opts)
-					buf_set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", map_opts)
-					buf_set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", map_opts)
-					buf_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", map_opts)
-					buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", map_opts)
-					--buf_set_keymap('n', '<leader>n', '<cmd>lua vim.lsp.buf.formatting()<CR>', map_opts)
+					set_key_map("n", "K", "<cmd>Lspsaga hover_doc<CR>")
+					set_key_map("n", "gr", "<cmd>Lspsaga rename<CR>")
+					set_key_map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+					set_key_map("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
+					set_key_map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
+					set_key_map("n", "gj", "<cmd>Lspsaga diagnostic_jump_prev<CR>")
+					set_key_map("n", "gk", "<cmd>Lspsaga diagnostic_jump_next<CR>")
+					set_key_map("n", "go", "<cmd>Lspsaga show_line_diagnostics<cr>")
+					set_key_map("n", "gx", "<cmd>lua require('lspsaga.codeaction').code_action()<CR>")
+					set_key_map("x", "gx", ":<c-u>lua require('lspsaga.codeaction').code_action()<CR>")
+					set_key_map("n", "<leader>r", "<cmd>lua vim.lsp.buf.references()<CR>")
+					set_key_map("n", "<leader>wl", "<cmd>lua print(vim.lsp.buf.list_workspace_folders()[1])<CR>")
 				end
 				server:setup(opts)
 			end)
@@ -267,13 +265,26 @@ return function(use)
 	use({
 		"L3MON4D3/LuaSnip",
 		after = "nvim-cmp",
-		--config = conf.luasnip,
+		config = function()
+			require("luasnip").config.set_config({
+				history = true,
+				updateevents = "TextChanged,TextChangedI",
+			})
+			require("luasnip/loaders/from_vscode").load()
+		end,
 		requires = "rafamadriz/friendly-snippets",
 	})
 	use({
 		"windwp/nvim-autopairs",
 		after = "nvim-cmp",
-		--config = conf.autopairs
+		config = function()
+			require("nvim-autopairs").setup({ fast_wrap = {} })
+
+			-- If you want insert `(` after select function or method item
+			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+			local cmp = require("cmp")
+			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
+		end,
 	})
 	use({ "github/copilot.vim", opt = true, cmd = "Copilot" })
 end
