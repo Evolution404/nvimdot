@@ -179,7 +179,32 @@ return function(use)
 				mapping = {
 					-- 回车和<Tab>键确定选项
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<Tab>"] = cmp.mapping.confirm({ select = true }),
+          -- <Tab>键使用代码片段，继续按切换下一个填充位置
+					["<Tab>"] = cmp.mapping(function(fallback)
+            local ls = require("luasnip")
+						if ls.expand_or_locally_jumpable() then
+							ls.expand_or_jump()
+						else
+							fallback()
+						end
+					end),
+          -- <S-Tab>键切换代码片段上一个位置
+					["<S-Tab>"] = cmp.mapping(function(fallback)
+            local ls = require("luasnip")
+						if ls.jumpable(-1) then
+							ls.jump(-1)
+						else
+							fallback()
+						end
+					end),
+					-- 通过<C-h>跳转到代码片段上一个位置
+					["<C-h>"] = function()
+						feedkeys("<Plug>luasnip-jump-prev")
+					end,
+					-- 通过<C-l>跳转到代码片段下一个位置
+					["<C-l>"] = function()
+						feedkeys("<Plug>luasnip-expand-or-jump")
+					end,
 					-- <C-n>和<C-p>用来前后切换选项
 					["<C-n>"] = cmp.mapping(function()
 						if cmp.visible() then
@@ -196,13 +221,6 @@ return function(use)
 					["<C-d>"] = cmp.mapping.scroll_docs(-4),
 					["<C-f>"] = cmp.mapping.scroll_docs(4),
 					["<C-e>"] = cmp.mapping.close(),
-					["<C-h>"] = function()
-						feedkeys("<Plug>luasnip-jump-prev")
-					end,
-					-- 通过<C-l>跳转到代码片段下一个位置
-					["<C-l>"] = function()
-						feedkeys("<Plug>luasnip-expand-or-jump")
-					end,
 				},
 				snippet = {
 					expand = function(args)
