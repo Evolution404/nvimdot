@@ -274,17 +274,24 @@ return function(use)
 		end,
 		requires = "rafamadriz/friendly-snippets",
 	})
+	-- 括号自动补全插件
 	use({
 		"windwp/nvim-autopairs",
 		after = "nvim-cmp",
 		config = function()
-			require("nvim-autopairs").setup({ fast_wrap = {} })
+			local npairs = require("nvim-autopairs")
+			--local Rule = require('nvim-autopairs.rule')
+			-- 启用fast_wrap，可以利用<M-e>快速补全括号
+			npairs.setup({ fast_wrap = {} })
 
-			-- If you want insert `(` after select function or method item
+			--npairs.add_rules({
+			--  Rule("u%d%d%d%d$", "number", "lua")
+			--    :use_regex(true)
+			--})
+			-- 补全后自动添加括号
 			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 			local cmp = require("cmp")
 			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
 		end,
 	})
-	use({ "github/copilot.vim", opt = true, cmd = "Copilot" })
 end
