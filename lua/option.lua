@@ -18,3 +18,4 @@ option.expandtab = true
 option.wrap = false
 option.termguicolors = true
 option.undofile = true
+option.updatetime = 1000
