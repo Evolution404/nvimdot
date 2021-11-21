@@ -3,23 +3,6 @@ return function(use)
 		"neovim/nvim-lspconfig",
 		opt = true,
 		event = "BufReadPre",
-		config = function()
-			if not packer_plugins["nvim-lspconfig"].loaded then
-				vim.cmd([[packadd nvim-lspconfig]])
-			end
-
-			if not packer_plugins["nvim-lsp-installer"].loaded then
-				vim.cmd([[packadd nvim-lsp-installer]])
-			end
-
-			if not packer_plugins["lsp_signature.nvim"].loaded then
-				vim.cmd([[packadd lsp_signature.nvim]])
-			end
-
-			if not packer_plugins["lspsaga.nvim"].loaded then
-				vim.cmd([[packadd lspsaga.nvim]])
-			end
-		end,
 	})
 
 	use({
@@ -100,8 +83,8 @@ return function(use)
 					set_key_map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
 					set_key_map("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
 					set_key_map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
-					set_key_map("n", "gj", "<cmd>Lspsaga diagnostic_jump_prev<CR>")
-					set_key_map("n", "gk", "<cmd>Lspsaga diagnostic_jump_next<CR>")
+					set_key_map("n", "gj", "<cmd>Lspsaga diagnostic_jump_next<CR>")
+					set_key_map("n", "gk", "<cmd>Lspsaga diagnostic_jump_prev<CR>")
 					set_key_map("n", "go", "<cmd>Lspsaga show_line_diagnostics<cr>")
 					set_key_map("n", "gx", "<cmd>lua require('lspsaga.codeaction').code_action()<CR>")
 					set_key_map("x", "gx", ":<c-u>lua require('lspsaga.codeaction').code_action()<CR>")
@@ -112,6 +95,7 @@ return function(use)
 			end)
 		end,
 	})
+	-- 对lsp的各类功能提供悬浮窗口展示
 	use({ "tami5/lspsaga.nvim", opt = true, after = "nvim-lspconfig" })
 	use({
 		"kosayoda/nvim-lightbulb",
@@ -129,33 +113,24 @@ return function(use)
 		event = "InsertEnter",
 		requires = {
 			{ "saadparwaiz1/cmp_luasnip", after = "LuaSnip" },
-			{ "hrsh7th/cmp-buffer", after = "cmp_luasnip" },
-			{ "hrsh7th/cmp-nvim-lsp", after = "cmp-buffer" },
-			{ "hrsh7th/cmp-nvim-lua", after = "cmp-nvim-lsp" },
-			{ "andersevenrud/compe-tmux", branch = "cmp", after = "cmp-nvim-lua" },
-			{ "hrsh7th/cmp-path", after = "compe-tmux" },
-			{ "f3fora/cmp-spell", after = "cmp-path" },
-			-- {
-			--     'tzachar/cmp-tabnine',
-			--     run = './install.sh',
-			--     after = 'cmp-spell',
-			--     config = conf.tabnine
-			-- }
+			{ "hrsh7th/cmp-buffer", after = "LuaSnip" },
+			{ "hrsh7th/cmp-nvim-lsp", after = "LuaSnip" },
+			{ "hrsh7th/cmp-nvim-lua", after = "LuaSnip" },
+			{ "hrsh7th/cmp-path", after = "LuaSnip" },
+			{ "f3fora/cmp-spell", after = "LuaSnip" },
 		},
 		config = function()
-			local t = function(str)
-				return vim.api.nvim_replace_termcodes(str, true, true, true)
-			end
-			local has_words_before = function()
-				local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-				if col == 0 then
-					return false
-				end
-				return vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+			-- 向vim发送按键序列，用于触发选择备选列表中下一项和前一项
+			local function feedkeys(str)
+				local keys = vim.api.nvim_replace_termcodes(str, true, true, true)
+				vim.fn.feedkeys(keys, "")
 			end
 
 			local cmp = require("cmp")
 			cmp.setup({
+				-- 定义补全列表展示出来的格式，包括kind和menu两部分
+				-- kind：一个特殊符号以及类型名称
+				-- menu：展示补全的来源
 				formatting = {
 					format = function(entry, vim_item)
 						local lspkind_icons = {
@@ -185,17 +160,14 @@ return function(use)
 							Operator = "",
 							TypeParameter = "",
 						}
-						-- load lspkind icons
+						-- 构造出来 特殊符号+类型名称 的格式
 						vim_item.kind = string.format("%s %s", lspkind_icons[vim_item.kind], vim_item.kind)
-
+						-- 补全条目的各种来源名称
 						vim_item.menu = ({
-							-- cmp_tabnine = "[TN]",
-							orgmode = "[ORG]",
 							nvim_lsp = "[LSP]",
 							nvim_lua = "[Lua]",
 							buffer = "[BUF]",
 							path = "[PATH]",
-							tmux = "[TMUX]",
 							luasnip = "[SNIP]",
 							spell = "[SPELL]",
 						})[entry.source.name]
@@ -205,41 +177,31 @@ return function(use)
 				},
 				-- You can set mappings if you want
 				mapping = {
+					-- 回车和<Tab>键确定选项
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<C-p>"] = cmp.mapping.select_prev_item(),
-					["<C-n>"] = cmp.mapping.select_next_item(),
+					["<Tab>"] = cmp.mapping.confirm({ select = true }),
+					-- <C-n>和<C-p>用来前后切换选项
+					["<C-n>"] = cmp.mapping(function()
+						if cmp.visible() then
+							cmp.select_next_item()
+						else
+							cmp.complete()
+						end
+					end),
+					["<C-p>"] = cmp.mapping(function()
+						if cmp.visible() then
+							cmp.select_prev_item()
+						end
+					end),
 					["<C-d>"] = cmp.mapping.scroll_docs(-4),
 					["<C-f>"] = cmp.mapping.scroll_docs(4),
 					["<C-e>"] = cmp.mapping.close(),
-					["<Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_next_item()
-						elseif has_words_before() then
-							cmp.complete()
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<S-Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_prev_item()
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<C-h>"] = function(fallback)
-						if require("luasnip").jumpable(-1) then
-							vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
-						else
-							fallback()
-						end
+					["<C-h>"] = function()
+						feedkeys("<Plug>luasnip-jump-prev")
 					end,
-					["<C-l>"] = function(fallback)
-						if require("luasnip").expand_or_jumpable() then
-							vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
-						else
-							fallback()
-						end
+					-- 通过<C-l>跳转到代码片段下一个位置
+					["<C-l>"] = function()
+						feedkeys("<Plug>luasnip-expand-or-jump")
 					end,
 				},
 				snippet = {
@@ -247,7 +209,7 @@ return function(use)
 						require("luasnip").lsp_expand(args.body)
 					end,
 				},
-				-- You should specify your *installed* sources.
+				-- 指定补全项的来源都有哪些
 				sources = {
 					{ name = "nvim_lsp" },
 					{ name = "nvim_lua" },
@@ -255,9 +217,6 @@ return function(use)
 					{ name = "buffer" },
 					{ name = "path" },
 					{ name = "spell" },
-					{ name = "tmux" },
-					{ name = "orgmode" },
-					-- {name = 'cmp_tabnine'},
 				},
 			})
 		end,
