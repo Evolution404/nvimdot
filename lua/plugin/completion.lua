@@ -86,7 +86,7 @@ return function(use)
 					-- 单个go文件也启用lsp
 					opts.single_file_support = true
 				end
-        -- 为服务端最终设置配置选项
+				-- 为服务端最终设置配置选项
 				server:setup(opts)
 			end)
 		end,
@@ -99,6 +99,8 @@ return function(use)
 		opt = true,
 		after = "nvim-lspconfig",
 		config = function()
+			-- 重新定义标记的符号，避免灯泡下面出现下划线
+			vim.fn.sign_define("LightBulbSign", { text = "💡", texthl = "", linehl = "", numhl = "" })
 			vim.cmd([[
           autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
         ]])
