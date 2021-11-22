@@ -7,7 +7,7 @@ return function(use)
 		--config = conf.rust_tools
 	})
 	use({
-		"kristijanhusak/orgmode.nvim",
+		"nvim-orgmode/orgmode",
 		opt = true,
 		ft = "org",
 		--config = conf.lang_org
