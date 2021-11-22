@@ -5,20 +5,25 @@ return function(use)
 		event = "BufReadPre",
 	})
 
-	-- 对lsp的各类功能提供悬浮窗口展示
-	use({ "tami5/lspsaga.nvim", opt = true, after = "nvim-lspconfig" })
+	-- 在输入函数参数的时候展示当前正在输入的参数
 	use({
-		"kosayoda/nvim-lightbulb",
+		"ray-x/lsp_signature.nvim",
 		opt = true,
 		after = "nvim-lspconfig",
 		config = function()
-			vim.cmd([[
-          autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
-        ]])
+			require("lsp_signature").setup({
+				bind = true,
+				use_lspsaga = false,
+				floating_window = true,
+				fix_pos = true,
+				hint_enable = true,
+				hi_parameter = "Search",
+				handler_opts = {
+					border = "rounded",
+				},
+			})
 		end,
 	})
-  -- 在输入函数参数的时候展示当前正在输入的参数
-	use({ "ray-x/lsp_signature.nvim", opt = true, after = "nvim-lspconfig" })
 
 	use({
 		"williamboman/nvim-lsp-installer",
@@ -36,23 +41,43 @@ return function(use)
 					},
 				},
 			})
-			-- 服务端启动后执行内部的回调函数
+			-- lsp server连接一个缓冲区的时候执行的回调函数
+			local function lsp_on_attach()
+				local function set_key_map(mode, lhs, rhs)
+					vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, { noremap = true, silent = true })
+				end
+				-- 在悬浮窗口中打开文档
+				set_key_map("n", "K", "<cmd>Lspsaga hover_doc<CR>")
+				-- 变量名重命名
+				set_key_map("n", "gr", "<cmd>Lspsaga rename<CR>")
+				-- 跳转到定义
+				set_key_map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+				-- 打开实现
+				set_key_map("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
+				set_key_map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
+				set_key_map("n", "go", "<cmd>Lspsaga show_line_diagnostics<cr>")
+				-- 查看当前位置可以使用的codeaction
+				set_key_map("n", "gx", "<cmd>lua require('lspsaga.codeaction').code_action()<CR>")
+				set_key_map("x", "gx", ":<c-u>lua require('lspsaga.codeaction').code_action()<CR>")
+				-- 在诊断信息中前后跳转
+				set_key_map("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>")
+				set_key_map("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>")
+				set_key_map("n", "<leader>r", "<cmd>lua vim.lsp.buf.references()<CR>")
+				set_key_map("n", "<leader>wl", "<cmd>lua print(vim.lsp.buf.list_workspace_folders()[1])<CR>")
+			end
+			-- 服务端启动后执行内部的回调函数，通过setup函数为每个lsp server设置配置选项
 			lsp_installer.on_server_ready(function(server)
-				local opts = {}
+				-- 设置所有lsp server的默认选项
+				local opts = {
+					flags = { debounce_text_changes = 500 },
+					on_attach = lsp_on_attach,
+				}
 				-- 通过判断服务端名称来单独配置各个服务端
 				if server.name == "sumneko_lua" then
 					opts.settings = {
 						Lua = {
 							-- 避免对配置文件里的vim和packer_plugins变量报错
 							diagnostics = { globals = { "vim", "packer_plugins" } },
-							workspace = {
-								library = {
-									[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-									[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-								},
-								maxPreload = 100000,
-								preloadFileSize = 10000,
-							},
 							-- 禁止发送统计数据
 							telemetry = { enable = false },
 						},
@@ -61,61 +86,22 @@ return function(use)
 					-- 单个go文件也启用lsp
 					opts.single_file_support = true
 				end
-				-- 配置服务端的兼容性
-				--local capabilities = vim.lsp.protocol.make_client_capabilities()
-				--local completionItem = capabilities.textDocument.completion.completionItem
-				--completionItem.documentationFormat = {
-				--	"markdown",
-				--	"plaintext",
-				--}
-				--completionItem.snippetSupport = true
-				--completionItem.preselectSupport = true
-				--completionItem.insertReplaceSupport = true
-				--completionItem.labelDetailsSupport = true
-				--completionItem.deprecatedSupport = true
-				--completionItem.commitCharactersSupport = true
-				--completionItem.tagSupport = { valueSet = { 1 } }
-				--completionItem.resolveSupport = {
-				--	properties = { "documentation", "detail", "additionalTextEdits" },
-				--}
-				--opts.capabilities = capabilities
-				opts.flags = { debounce_text_changes = 500 }
-				opts.on_attach = function()
-					require("lsp_signature").on_attach({
-						bind = true,
-						use_lspsaga = false,
-						floating_window = true,
-						fix_pos = true,
-						hint_enable = true,
-						hi_parameter = "Search",
-						handler_opts = {
-							border = "rounded",
-						},
-					})
-					local function set_key_map(mode, lhs, rhs)
-						vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, { noremap = true, silent = true })
-					end
-					-- 在悬浮窗口中打开文档
-					set_key_map("n", "K", "<cmd>Lspsaga hover_doc<CR>")
-					-- 变量名重命名
-					set_key_map("n", "gr", "<cmd>Lspsaga rename<CR>")
-					-- 跳转到定义
-					set_key_map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-					-- 打开实现
-					set_key_map("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
-					set_key_map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
-					set_key_map("n", "go", "<cmd>Lspsaga show_line_diagnostics<cr>")
-					-- 查看当前位置可以使用的codeaction
-					set_key_map("n", "gx", "<cmd>lua require('lspsaga.codeaction').code_action()<CR>")
-					set_key_map("x", "gx", ":<c-u>lua require('lspsaga.codeaction').code_action()<CR>")
-					-- 在诊断信息中前后跳转
-					set_key_map("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>")
-					set_key_map("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>")
-					set_key_map("n", "<leader>r", "<cmd>lua vim.lsp.buf.references()<CR>")
-					set_key_map("n", "<leader>wl", "<cmd>lua print(vim.lsp.buf.list_workspace_folders()[1])<CR>")
-				end
+        -- 为服务端最终设置配置选项
 				server:setup(opts)
 			end)
+		end,
+	})
+
+	-- 对lsp的各类功能提供悬浮窗口展示
+	use({ "tami5/lspsaga.nvim", opt = true, after = "nvim-lspconfig" })
+	use({
+		"kosayoda/nvim-lightbulb",
+		opt = true,
+		after = "nvim-lspconfig",
+		config = function()
+			vim.cmd([[
+          autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
+        ]])
 		end,
 	})
 
@@ -182,7 +168,7 @@ return function(use)
 				},
 				-- You can set mappings if you want
 				mapping = {
-					-- 回车和<Tab>键确定选项
+					-- 回车键确定选项
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 					-- <Tab>键使用代码片段，继续按切换下一个填充位置
 					["<Tab>"] = cmp.mapping(function(fallback)
