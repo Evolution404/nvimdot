@@ -187,7 +187,7 @@ return function(use)
 						else
 							fallback()
 						end
-					end),
+					end, { "i", "s" }),
 					-- <S-Tab>键切换代码片段上一个位置
 					["<S-Tab>"] = cmp.mapping(function(fallback)
 						local ls = require("luasnip")
@@ -196,15 +196,21 @@ return function(use)
 						else
 							fallback()
 						end
-					end),
-					-- 通过<C-h>跳转到代码片段上一个位置
-					["<C-h>"] = function()
-						feedkeys("<Plug>luasnip-jump-prev")
-					end,
+					end, { "i", "s" }),
 					-- 通过<C-l>跳转到代码片段下一个位置
-					["<C-l>"] = function()
-						feedkeys("<Plug>luasnip-expand-or-jump")
-					end,
+					["<C-l>"] = cmp.mapping(function()
+						local ls = require("luasnip")
+						if ls.expand_or_locally_jumpable() then
+							ls.expand_or_jump()
+						end
+					end, { "i", "s" }),
+					-- 通过<C-h>跳转到代码片段上一个位置
+					["<C-h>"] = cmp.mapping(function()
+						local ls = require("luasnip")
+						if ls.jumpable(-1) then
+							ls.jump(-1)
+						end
+					end, { "i", "s" }),
 					-- <C-n>和<C-p>用来前后切换选项
 					["<C-n>"] = cmp.mapping(function()
 						if cmp.visible() then
