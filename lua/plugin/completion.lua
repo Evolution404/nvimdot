@@ -92,17 +92,17 @@ return function(use)
 					local function set_key_map(mode, lhs, rhs)
 						vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, { noremap = true, silent = true })
 					end
-          -- 在悬浮窗口中打开文档
+					-- 在悬浮窗口中打开文档
 					set_key_map("n", "K", "<cmd>Lspsaga hover_doc<CR>")
-          -- 变量名重命名
+					-- 变量名重命名
 					set_key_map("n", "gr", "<cmd>Lspsaga rename<CR>")
-          -- 跳转到定义
+					-- 跳转到定义
 					set_key_map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-          -- 打开实现
+					-- 打开实现
 					set_key_map("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
 					set_key_map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")
 					set_key_map("n", "go", "<cmd>Lspsaga show_line_diagnostics<cr>")
-          -- 查看当前位置可以使用的codeaction
+					-- 查看当前位置可以使用的codeaction
 					set_key_map("n", "gx", "<cmd>lua require('lspsaga.codeaction').code_action()<CR>")
 					set_key_map("x", "gx", ":<c-u>lua require('lspsaga.codeaction').code_action()<CR>")
 					-- 在诊断信息中前后跳转
@@ -115,7 +115,10 @@ return function(use)
 			end)
 		end,
 	})
+
+	-- 一系列用于为nvim-cmp提供补全内容的插件
 	use({ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" })
+	-- 提供当前缓冲区的内容作为补全项
 	use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-nvim-lsp", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" })
