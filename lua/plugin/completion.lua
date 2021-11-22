@@ -120,12 +120,6 @@ return function(use)
 			{ "f3fora/cmp-spell", after = "LuaSnip" },
 		},
 		config = function()
-			-- 向vim发送按键序列，用于触发选择备选列表中下一项和前一项
-			local function feedkeys(str)
-				local keys = vim.api.nvim_replace_termcodes(str, true, true, true)
-				vim.fn.feedkeys(keys, "")
-			end
-
 			local cmp = require("cmp")
 			cmp.setup({
 				-- 定义补全列表展示出来的格式，包括kind和menu两部分
