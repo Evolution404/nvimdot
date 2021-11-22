@@ -17,6 +17,7 @@ return function(use)
         ]])
 		end,
 	})
+  -- 在输入函数参数的时候展示当前正在输入的参数
 	use({ "ray-x/lsp_signature.nvim", opt = true, after = "nvim-lspconfig" })
 
 	use({
@@ -87,7 +88,9 @@ return function(use)
 						fix_pos = true,
 						hint_enable = true,
 						hi_parameter = "Search",
-						handler_opts = { "double" },
+						handler_opts = {
+							border = "rounded",
+						},
 					})
 					local function set_key_map(mode, lhs, rhs)
 						vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, { noremap = true, silent = true })
