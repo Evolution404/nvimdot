@@ -247,7 +247,9 @@ return function(use)
 				history = true,
 				updateevents = "TextChanged,TextChangedI",
 			})
-			require("luasnip/loaders/from_vscode").load()
+			-- 加载friendly_snippets
+			local friendly_snippets_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/friendly-snippets"
+			require("luasnip/loaders/from_vscode").load({ paths = friendly_snippets_path })
 		end,
 		requires = "rafamadriz/friendly-snippets",
 	})
