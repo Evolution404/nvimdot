@@ -179,18 +179,18 @@ return function(use)
 				mapping = {
 					-- 回车和<Tab>键确定选项
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
-          -- <Tab>键使用代码片段，继续按切换下一个填充位置
+					-- <Tab>键使用代码片段，继续按切换下一个填充位置
 					["<Tab>"] = cmp.mapping(function(fallback)
-            local ls = require("luasnip")
+						local ls = require("luasnip")
 						if ls.expand_or_locally_jumpable() then
 							ls.expand_or_jump()
 						else
 							fallback()
 						end
 					end),
-          -- <S-Tab>键切换代码片段上一个位置
+					-- <S-Tab>键切换代码片段上一个位置
 					["<S-Tab>"] = cmp.mapping(function(fallback)
-            local ls = require("luasnip")
+						local ls = require("luasnip")
 						if ls.jumpable(-1) then
 							ls.jump(-1)
 						else
