@@ -1,30 +1,12 @@
 return function(use)
+	-- neovim官方插件，为主流的lsp server设置基础配置
 	use({
 		"neovim/nvim-lspconfig",
 		opt = true,
 		event = "BufReadPre",
 	})
 
-	-- 在输入函数参数的时候展示当前正在输入的参数
-	use({
-		"ray-x/lsp_signature.nvim",
-		opt = true,
-		after = "nvim-lspconfig",
-		config = function()
-			require("lsp_signature").setup({
-				bind = true,
-				use_lspsaga = false,
-				floating_window = true,
-				fix_pos = true,
-				hint_enable = true,
-				hi_parameter = "Search",
-				handler_opts = {
-					border = "rounded",
-				},
-			})
-		end,
-	})
-
+	-- 用于一键安装各类lsp server，并在此插件内部设置各个server的配置项
 	use({
 		"williamboman/nvim-lsp-installer",
 		opt = true,
@@ -92,8 +74,30 @@ return function(use)
 		end,
 	})
 
+	-- 在输入函数参数的时候展示当前正在输入的参数
+	use({
+		"ray-x/lsp_signature.nvim",
+		opt = true,
+		after = "nvim-lspconfig",
+		config = function()
+			require("lsp_signature").setup({
+				bind = true,
+				use_lspsaga = false,
+				floating_window = true,
+				fix_pos = true,
+				hint_enable = true,
+				hi_parameter = "Search",
+				handler_opts = {
+					border = "rounded",
+				},
+			})
+		end,
+	})
+
 	-- 对lsp的各类功能提供悬浮窗口展示
 	use({ "tami5/lspsaga.nvim", opt = true, after = "nvim-lspconfig" })
+
+	-- 在存在code action的行显示一个灯泡符号💡，用来提醒
 	use({
 		"kosayoda/nvim-lightbulb",
 		opt = true,
@@ -107,7 +111,7 @@ return function(use)
 		end,
 	})
 
-	-- 一系列用于为nvim-cmp提供补全内容的插件
+	-- 以下是一系列为nvim-cmp提供补全内容的插件
 	use({ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" })
 	-- 提供当前缓冲区的内容作为补全项
 	use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
@@ -115,6 +119,21 @@ return function(use)
 	use({ "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
 	use({ "f3fora/cmp-spell", after = "nvim-cmp" })
+  -- 代码片段插件
+	use({
+		"L3MON4D3/LuaSnip",
+		after = "nvim-cmp",
+		config = function()
+			require("luasnip").config.set_config({
+				history = true,
+				updateevents = "TextChanged,TextChangedI",
+			})
+			-- 加载friendly_snippets
+			local friendly_snippets_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/friendly-snippets"
+			require("luasnip/loaders/from_vscode").load({ paths = friendly_snippets_path })
+		end,
+		requires = "rafamadriz/friendly-snippets",
+	})
 	use({
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
@@ -168,7 +187,7 @@ return function(use)
 						return vim_item
 					end,
 				},
-				-- You can set mappings if you want
+				-- 定义补全过程中使用的映射
 				mapping = {
 					-- 回车键确定选项
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
@@ -238,30 +257,17 @@ return function(use)
 			})
 		end,
 	})
-	use({
-		"L3MON4D3/LuaSnip",
-		after = "nvim-cmp",
-		config = function()
-			require("luasnip").config.set_config({
-				history = true,
-				updateevents = "TextChanged,TextChangedI",
-			})
-			-- 加载friendly_snippets
-			local friendly_snippets_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/friendly-snippets"
-			require("luasnip/loaders/from_vscode").load({ paths = friendly_snippets_path })
-		end,
-		requires = "rafamadriz/friendly-snippets",
-	})
 	-- 括号自动补全插件
 	use({
 		"windwp/nvim-autopairs",
 		after = "nvim-cmp",
 		config = function()
 			local npairs = require("nvim-autopairs")
-			--local Rule = require('nvim-autopairs.rule')
 			-- 启用fast_wrap，可以利用<M-e>快速补全括号
 			npairs.setup({ fast_wrap = {} })
 
+      -- 自定义一个补全规则
+			--local Rule = require('nvim-autopairs.rule')
 			--npairs.add_rules({
 			--  Rule("u%d%d%d%d$", "number", "lua")
 			--    :use_regex(true)
