@@ -5,6 +5,20 @@ return function(use)
 		event = "BufReadPre",
 	})
 
+	-- 对lsp的各类功能提供悬浮窗口展示
+	use({ "tami5/lspsaga.nvim", opt = true, after = "nvim-lspconfig" })
+	use({
+		"kosayoda/nvim-lightbulb",
+		opt = true,
+		after = "nvim-lspconfig",
+		config = function()
+			vim.cmd([[
+          autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
+        ]])
+		end,
+	})
+	use({ "ray-x/lsp_signature.nvim", opt = true, after = "nvim-lspconfig" })
+
 	use({
 		"williamboman/nvim-lsp-installer",
 		opt = true,
@@ -101,30 +115,15 @@ return function(use)
 			end)
 		end,
 	})
-	-- 对lsp的各类功能提供悬浮窗口展示
-	use({ "tami5/lspsaga.nvim", opt = true, after = "nvim-lspconfig" })
-	use({
-		"kosayoda/nvim-lightbulb",
-		opt = true,
-		after = "nvim-lspconfig",
-		config = function()
-			vim.cmd([[
-          autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
-        ]])
-		end,
-	})
-	use({ "ray-x/lsp_signature.nvim", opt = true, after = "nvim-lspconfig" })
+	use({ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" })
+	use({ "hrsh7th/cmp-buffer", after = "nvim-cmp" })
+	use({ "hrsh7th/cmp-nvim-lsp", after = "nvim-cmp" })
+	use({ "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" })
+	use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
+	use({ "f3fora/cmp-spell", after = "nvim-cmp" })
 	use({
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
-		requires = {
-			{ "saadparwaiz1/cmp_luasnip", after = "LuaSnip" },
-			{ "hrsh7th/cmp-buffer", after = "LuaSnip" },
-			{ "hrsh7th/cmp-nvim-lsp", after = "LuaSnip" },
-			{ "hrsh7th/cmp-nvim-lua", after = "LuaSnip" },
-			{ "hrsh7th/cmp-path", after = "LuaSnip" },
-			{ "f3fora/cmp-spell", after = "LuaSnip" },
-		},
 		config = function()
 			local cmp = require("cmp")
 			cmp.setup({
