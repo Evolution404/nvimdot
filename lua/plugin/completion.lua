@@ -95,7 +95,16 @@ return function(use)
 	})
 
 	-- 对lsp的各类功能提供悬浮窗口展示
-	use({ "tami5/lspsaga.nvim", opt = true, after = "nvim-lspconfig" })
+	use({
+		"tami5/lspsaga.nvim",
+		opt = true,
+		after = "nvim-lspconfig",
+		config = function()
+			local opts = { noremap = true }
+			vim.api.nvim_set_keymap("n", "gt", [[:Lspsaga open_floaterm<CR>]], opts)
+			vim.api.nvim_set_keymap("t", "gt", [[<C-\><C-n>:Lspsaga close_floaterm<CR>]], opts)
+		end,
+	})
 
 	-- 在存在code action的行显示一个灯泡符号💡，用来提醒
 	use({
@@ -119,7 +128,7 @@ return function(use)
 	use({ "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" })
 	use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
 	use({ "f3fora/cmp-spell", after = "nvim-cmp" })
-  -- 代码片段插件
+	-- 代码片段插件
 	use({
 		"L3MON4D3/LuaSnip",
 		after = "nvim-cmp",
@@ -266,7 +275,7 @@ return function(use)
 			-- 启用fast_wrap，可以利用<M-e>快速补全括号
 			npairs.setup({ fast_wrap = {} })
 
-      -- 自定义一个补全规则
+			-- 自定义一个补全规则
 			--local Rule = require('nvim-autopairs.rule')
 			--npairs.add_rules({
 			--  Rule("u%d%d%d%d$", "number", "lua")
