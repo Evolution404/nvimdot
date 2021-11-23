@@ -121,14 +121,14 @@ return function(use)
 			})
 		end,
 	})
-	use({
-		"andymass/vim-matchup",
-		opt = true,
-		after = "nvim-treesitter",
-		config = function()
-			vim.cmd([[let g:matchup_matchparen_offscreen = {'method': 'popup'}]])
-		end,
-	})
+	--use({
+	--	"andymass/vim-matchup",
+	--	opt = true,
+	--	after = "nvim-treesitter",
+	--	config = function()
+	--		vim.cmd([[let g:matchup_matchparen_offscreen = {'method': 'popup'}]])
+	--	end,
+	--})
 	use({
 		"SmiteshP/nvim-gps",
 		opt = true,
@@ -415,7 +415,7 @@ return function(use)
 		end,
 	})
 	use({ "nvim-treesitter/nvim-treesitter-textobjects", opt = true, after = "nvim-treesitter" })
-	use({ "romgrk/nvim-treesitter-context", opt = true, after = "nvim-treesitter" })
+	--use({ "romgrk/nvim-treesitter-context", opt = true, after = "nvim-treesitter" })
 	use({ "p00f/nvim-ts-rainbow", opt = true, after = "nvim-treesitter", event = "BufRead" })
 	use({ "JoosepAlviste/nvim-ts-context-commentstring", opt = true, after = "nvim-treesitter" })
 	set_keymap("n", "<leader>n", ":Neoformat<cr>", { noremap = true, silent = true })
