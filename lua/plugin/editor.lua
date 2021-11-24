@@ -7,7 +7,7 @@ return function(use)
 		cmd = { "SymbolsOutline", "SymbolsOulineOpen" },
 		-- 使用setup配置，需要在插件启动前修改全局变量
 		setup = function()
-      -- 注释掉的为默认配置
+			-- 注释掉的为默认配置
 			vim.g.symbols_outline = {
 				--highlight_hovered_item = true,
 				--show_guides = true,
@@ -61,13 +61,16 @@ return function(use)
 		opt = true,
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
-			vim.api.nvim_command("augroup user_plugin_cursorword")
-			vim.api.nvim_command("autocmd!")
-			vim.api.nvim_command("autocmd FileType NvimTree,lspsagafinder,dashboard let b:cursorword = 0")
-			vim.api.nvim_command("autocmd WinEnter * if &diff || &pvw | let b:cursorword = 0 | endif")
-			vim.api.nvim_command("autocmd InsertEnter * let b:cursorword = 0")
-			vim.api.nvim_command("autocmd InsertLeave * let b:cursorword = 1")
-			vim.api.nvim_command("augroup END")
+			vim.cmd([[
+        augroup user_plugin_cursorword
+        autocmd!
+        " 以下文件类型不对当前单词加上下划线
+        autocmd FileType NvimTree,lspsagafinder,dashboard let b:cursorword = 0
+        autocmd WinEnter * if &diff || &pvw | let b:cursorword = 0 | endif
+        autocmd InsertEnter * let b:cursorword = 0
+        autocmd InsertLeave * let b:cursorword = 1
+        augroup END
+      ]])
 		end,
 	})
 	use({
