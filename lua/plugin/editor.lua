@@ -1,5 +1,6 @@
 local set_keymap = vim.api.nvim_set_keymap
 return function(use)
+  -- 大纲插件
 	set_keymap("n", "<leader>l", ":SymbolsOutline<cr>", { noremap = true, silent = true })
 	use({
 		"simrat39/symbols-outline.nvim",
@@ -7,55 +8,16 @@ return function(use)
 		cmd = { "SymbolsOutline", "SymbolsOulineOpen" },
 		-- 使用setup配置，需要在插件启动前修改全局变量
 		setup = function()
-			-- 注释掉的为默认配置
 			vim.g.symbols_outline = {
-				--highlight_hovered_item = true,
-				--show_guides = true,
 				auto_preview = false,
-				--position = "right",
-				--show_numbers = false,
-				--show_relative_numbers = false,
-				--show_symbol_details = true,
 				keymaps = {
 					close = "q",
-					--goto_location = "<Cr>",
-					--focus_location = "o",
 					hover_symbol = "<leader>k",
-					--rename_symbol = "r",
-					--code_actions = "a",
 				},
-				--lsp_blacklist = {},
-				--symbols = {
-				--	File = { icon = "", hl = "TSURI" },
-				--	Module = { icon = "", hl = "TSNamespace" },
-				--	Namespace = { icon = "", hl = "TSNamespace" },
-				--	Package = { icon = "", hl = "TSNamespace" },
-				--	Class = { icon = "𝓒", hl = "TSType" },
-				--	Method = { icon = "ƒ", hl = "TSMethod" },
-				--	Property = { icon = "", hl = "TSMethod" },
-				--	Field = { icon = "", hl = "TSField" },
-				--	Constructor = { icon = "", hl = "TSConstructor" },
-				--	Enum = { icon = "ℰ", hl = "TSType" },
-				--	Interface = { icon = "ﰮ", hl = "TSType" },
-				--	Function = { icon = "", hl = "TSFunction" },
-				--	Variable = { icon = "", hl = "TSConstant" },
-				--	Constant = { icon = "", hl = "TSConstant" },
-				--	String = { icon = "𝓐", hl = "TSString" },
-				--	Number = { icon = "#", hl = "TSNumber" },
-				--	Boolean = { icon = "⊨", hl = "TSBoolean" },
-				--	Array = { icon = "", hl = "TSConstant" },
-				--	Object = { icon = "⦿", hl = "TSType" },
-				--	Key = { icon = "🔐", hl = "TSType" },
-				--	Null = { icon = "NULL", hl = "TSType" },
-				--	EnumMember = { icon = "", hl = "TSField" },
-				--	Struct = { icon = "𝓢", hl = "TSType" },
-				--	Event = { icon = "🗲", hl = "TSType" },
-				--	Operator = { icon = "+", hl = "TSOperator" },
-				--	TypeParameter = { icon = "𝙏", hl = "TSParameter" },
-				--},
 			}
 		end,
 	})
+
 	use({
 		"itchyny/vim-cursorword",
 		opt = true,
@@ -73,6 +35,7 @@ return function(use)
       ]])
 		end,
 	})
+
 	use({
 		"nvim-treesitter/nvim-treesitter",
 		opt = true,
