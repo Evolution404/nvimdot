@@ -341,7 +341,11 @@ return function(use)
 		opt = true,
 		cmd = "ZenMode",
 		config = function()
-			require("zen-mode").setup({})
+			require("zen-mode").setup({
+        on_open = function()
+          vim.cmd[[set number]]
+        end,
+      })
 		end,
 	})
 
