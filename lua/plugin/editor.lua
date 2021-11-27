@@ -1,7 +1,101 @@
 local set_keymap = vim.api.nvim_set_keymap
 return function(use)
+	-- 语法高亮增强插件
+	use({
+		"nvim-treesitter/nvim-treesitter",
+		opt = true,
+		run = ":TSUpdate",
+		event = "BufRead",
+		config = function()
+			vim.cmd([[set foldmethod=expr]])
+			vim.cmd([[set foldexpr=nvim_treesitter#foldexpr()]])
+
+			require("nvim-treesitter.configs").setup({
+				ensure_installed = "maintained",
+				highlight = { enable = true },
+				incremental_selection = {
+					enable = true,
+					keymaps = {
+						init_selection = "sv",
+						node_incremental = "n",
+						scope_incremental = "v",
+						node_decremental = "b",
+					},
+				},
+				textobjects = {
+					select = {
+						enable = true,
+						lookahead = true,
+						keymaps = {
+							["af"] = "@function.outer",
+							["if"] = "@function.inner",
+							["ac"] = "@class.outer",
+							["ic"] = "@class.inner",
+						},
+					},
+					swap = {
+						enable = true,
+						swap_next = {
+							["<leader>L"] = "@parameter.inner",
+						},
+						swap_previous = {
+							["<leader>H"] = "@parameter.inner",
+						},
+					},
+					move = {
+						enable = true,
+						set_jumps = true, -- whether to set jumps in the jumplist
+						goto_next_start = {
+							["]m"] = "@function.outer",
+							["]]"] = "@class.outer",
+						},
+						goto_next_end = {
+							["]M"] = "@function.outer",
+							["]["] = "@class.outer",
+						},
+						goto_previous_start = {
+							["[m"] = "@function.outer",
+							["[["] = "@class.outer",
+						},
+						goto_previous_end = {
+							["[M"] = "@function.outer",
+							["[]"] = "@class.outer",
+						},
+					},
+				},
+				-- 集成vim-matchup插件
+				matchup = { enable = true },
+				-- 集成nvim-ts-rainbow，彩虹括号功能
+				rainbow = {
+					enable = true,
+					extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+					max_file_lines = 5000, -- Do not enable for files with more than n lines, int
+				},
+        -- 集成nvim-ts-context-commentstring注释插件
+				context_commentstring = {
+					enable = true,
+				},
+			})
+		end,
+	})
+  -- 接下来是一系列nvim-treesitter的扩展模块
+	-- 各种文本对象功能
+	use({ "nvim-treesitter/nvim-treesitter-textobjects", opt = true, after = "nvim-treesitter" })
+	-- 增强%的跳转功能
+	use({
+		"andymass/vim-matchup",
+		opt = true,
+		after = "nvim-treesitter",
+	})
+	-- 彩虹括号插件
+	use({ "p00f/nvim-ts-rainbow", opt = true, after = "nvim-treesitter", event = "BufRead" })
+
+	-- use({ "romgrk/nvim-treesitter-context", opt = true, after = "nvim-treesitter" })
+  -- 注释插件
+	use({ "JoosepAlviste/nvim-ts-context-commentstring", opt = true, after = "nvim-treesitter" })
+
 	-- 大纲插件
-	set_keymap("n", "<leader>l", ":SymbolsOutline<cr>", { noremap = true, silent = true })
+	set_keymap("n", "<leader>o", ":SymbolsOutline<cr>", { noremap = true, silent = true })
 	use({
 		"simrat39/symbols-outline.nvim",
 		opt = true,
@@ -36,39 +130,6 @@ return function(use)
 		end,
 	})
 
-	use({
-		"nvim-treesitter/nvim-treesitter",
-		opt = true,
-		run = ":TSUpdate",
-		event = "BufRead",
-		config = function()
-			vim.cmd([[set foldmethod=expr]])
-			vim.cmd([[set foldexpr=nvim_treesitter#foldexpr()]])
-
-			require("nvim-treesitter.configs").setup({
-				ensure_installed = "maintained",
-				highlight = { enable = true },
-				incremental_selection = {
-					enable = true,
-					keymaps = {
-						init_selection = "sv",
-						node_incremental = "n",
-						scope_incremental = "v",
-						node_decremental = "b",
-					},
-				},
-				textobjects = { enable = true },
-			})
-		end,
-	})
-	--use({
-	--	"andymass/vim-matchup",
-	--	opt = true,
-	--	after = "nvim-treesitter",
-	--	config = function()
-	--		vim.cmd([[let g:matchup_matchparen_offscreen = {'method': 'popup'}]])
-	--	end,
-	--})
 	use({
 		"SmiteshP/nvim-gps",
 		opt = true,
@@ -354,10 +415,6 @@ return function(use)
 			})
 		end,
 	})
-	use({ "nvim-treesitter/nvim-treesitter-textobjects", opt = true, after = "nvim-treesitter" })
-	--use({ "romgrk/nvim-treesitter-context", opt = true, after = "nvim-treesitter" })
-	use({ "p00f/nvim-ts-rainbow", opt = true, after = "nvim-treesitter", event = "BufRead" })
-	use({ "JoosepAlviste/nvim-ts-context-commentstring", opt = true, after = "nvim-treesitter" })
 	set_keymap("n", "<leader>n", ":Neoformat<cr>", { noremap = true, silent = true })
 	use({ "sbdchd/neoformat", opt = true, cmd = "Neoformat" })
 	use({ "rhysd/accelerated-jk", opt = true })
