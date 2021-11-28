@@ -19,8 +19,6 @@ function Run()
 end
 -- Y复制到行尾
 set_keymap("n", "Y", "y$", { noremap = true })
--- 远程复制内容
-set_keymap("v", ";y", ":OSCYank<cr>", { noremap = true })
 -- 命令模式回到开始位置
 set_keymap("c", "<c-a>", "<c-b>", { noremap = true })
 -- 切换是否高亮搜索结果

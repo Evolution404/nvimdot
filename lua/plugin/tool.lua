@@ -1,6 +1,18 @@
 return function(use)
 	use("romgrk/fzy-lua-native")
-	use("ojroques/vim-oscyank")
+
+	-- 远程内容复制插件
+	use({
+		"ojroques/vim-oscyank",
+		config = function()
+      vim.cmd[[
+        vnoremap <leader>y :OSCYank<CR>
+        nmap <leader>y <Plug>OSCYank
+      ]]
+		end,
+	})
+
+  -- 命令模式搜索补全
 	use({
 		"gelguy/wilder.nvim",
 		event = "CmdlineEnter",
