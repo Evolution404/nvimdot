@@ -25,3 +25,10 @@ set_keymap("c", "<c-a>", "<c-b>", { noremap = true })
 set_keymap("n", "\\", ":set hlsearch!<cr>", { noremap = true })
 -- 切换到当前文件夹
 set_keymap("n", "<leader>.", ":cd %:p:h<cr>", { noremap = true, silent = true })
+
+-- 设置终端窗口中的映射
+set_keymap("t", "<C-[>", [[<C-\><C-n>]], { noremap = true })
+set_keymap("t", "<C-w>h", [[<C-\><C-n><C-W>h]], { noremap = true })
+set_keymap("t", "<C-w>j", [[<C-\><C-n><C-W>j]], { noremap = true })
+set_keymap("t", "<C-w>k", [[<C-\><C-n><C-W>k]], { noremap = true })
+set_keymap("t", "<C-w>l", [[<C-\><C-n><C-W>l]], { noremap = true })

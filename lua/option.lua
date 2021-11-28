@@ -1,6 +1,7 @@
 local option = vim.o
 option.mouse = "a"
 option.number = true
+option.relativenumber = true
 option.hidden = true
 --option.relativenumber = true
 --option.cursorcolumn = true
