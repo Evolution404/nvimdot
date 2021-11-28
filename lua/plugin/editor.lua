@@ -71,14 +71,14 @@ return function(use)
 					extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
 					max_file_lines = 5000, -- Do not enable for files with more than n lines, int
 				},
-        -- 集成nvim-ts-context-commentstring注释插件
+				-- 集成nvim-ts-context-commentstring注释插件
 				context_commentstring = {
 					enable = true,
 				},
 			})
 		end,
 	})
-  -- 接下来是一系列nvim-treesitter的扩展模块
+	-- 接下来是一系列nvim-treesitter的扩展模块
 	-- 各种文本对象功能
 	use({ "nvim-treesitter/nvim-treesitter-textobjects", opt = true, after = "nvim-treesitter" })
 	-- 增强%的跳转功能
@@ -91,8 +91,25 @@ return function(use)
 	use({ "p00f/nvim-ts-rainbow", opt = true, after = "nvim-treesitter", event = "BufRead" })
 
 	-- use({ "romgrk/nvim-treesitter-context", opt = true, after = "nvim-treesitter" })
-  -- 注释插件
+	-- 注释插件
 	use({ "JoosepAlviste/nvim-ts-context-commentstring", opt = true, after = "nvim-treesitter" })
+	-- 在状态栏显示当前代码结构路径
+	use({
+		"SmiteshP/nvim-gps",
+		opt = true,
+		after = "nvim-treesitter",
+		config = function()
+			require("nvim-gps").setup({
+				icons = {
+					["class-name"] = " ", -- Classes and class-like objects
+					["function-name"] = " ", -- Functions
+					["method-name"] = " ", -- Methods (functions inside class-like objects)
+					["container-name"] = "▦ ", -- Containers (example: lua tables)
+					["tag-name"] = "炙", -- Tags (example: html tags)
+				},
+			})
+		end,
+	})
 
 	-- 大纲插件
 	set_keymap("n", "<leader>o", ":SymbolsOutline<cr>", { noremap = true, silent = true })
@@ -130,33 +147,6 @@ return function(use)
 		end,
 	})
 
-	use({
-		"SmiteshP/nvim-gps",
-		opt = true,
-		after = "nvim-treesitter",
-		config = function()
-			require("nvim-gps").setup({
-				icons = {
-					["class-name"] = " ", -- Classes and class-like objects
-					["function-name"] = " ", -- Functions
-					["method-name"] = " ", -- Methods (functions inside class-like objects)
-					["container-name"] = "▦ ", -- Containers (example: lua tables)
-					["tag-name"] = "炙", -- Tags (example: html tags)
-				},
-				languages = { -- You can disable any language individually here
-					["c"] = true,
-					["cpp"] = true,
-					["go"] = true,
-					["java"] = true,
-					["javascript"] = true,
-					["lua"] = true,
-					["python"] = true,
-					["rust"] = true,
-				},
-				separator = " > ",
-			})
-		end,
-	})
 	use({
 		"windwp/nvim-ts-autotag",
 		opt = true,
