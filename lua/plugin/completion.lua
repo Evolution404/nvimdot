@@ -101,8 +101,8 @@ return function(use)
 		after = "nvim-lspconfig",
 		config = function()
 			local opts = { noremap = true }
-			vim.api.nvim_set_keymap("n", "gt", [[:Lspsaga open_floaterm<CR>]], opts)
-			vim.api.nvim_set_keymap("t", "gt", [[<C-\><C-n>:Lspsaga close_floaterm<CR>]], opts)
+			vim.api.nvim_set_keymap("n", "<leader>t", [[:Lspsaga open_floaterm<CR>]], opts)
+			vim.api.nvim_set_keymap("t", "<leader>t", [[<C-\><C-n>:Lspsaga close_floaterm<CR>]], opts)
 		end,
 	})
 
