@@ -44,8 +44,8 @@ return function(use)
 				-- 在诊断信息中前后跳转
 				set_key_map("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>")
 				set_key_map("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>")
-				set_key_map("n", "<leader>r", "<cmd>lua vim.lsp.buf.references()<CR>")
-				set_key_map("n", "<leader>wl", "<cmd>lua print(vim.lsp.buf.list_workspace_folders()[1])<CR>")
+				set_key_map("n", "<leader>lr", "<cmd>lua vim.lsp.buf.references()<CR>")
+				set_key_map("n", "<leader>lw", "<cmd>lua print(vim.lsp.buf.list_workspace_folders()[1])<CR>")
 			end
 			-- 服务端启动后执行内部的回调函数，通过setup函数为每个lsp server设置配置选项
 			lsp_installer.on_server_ready(function(server)

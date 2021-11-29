@@ -173,6 +173,8 @@ return function(use)
 		opt = false,
 		config = function()
 			require("nvim_comment").setup({
+        -- 空白行不注释
+				comment_empty = false,
 				-- 增强注释功能，根据语义更新注释内容
 				hook = function()
 					require("ts_context_commentstring.internal").update_commentstring()

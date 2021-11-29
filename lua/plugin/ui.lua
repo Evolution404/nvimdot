@@ -99,7 +99,7 @@ return function(use)
 	})
 
 	-- <leader>f打开文件浏览器
-	set_keymap("n", "<leader>f", ":NvimTreeToggle<cr>", { noremap = true, silent = true })
+	set_keymap("n", "<leader>e", ":NvimTreeToggle<cr>", { noremap = true, silent = true })
 	use({
 		"kyazdani42/nvim-tree.lua",
 		opt = true,
