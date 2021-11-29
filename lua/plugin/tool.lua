@@ -89,8 +89,8 @@ return function(use)
 			if not packer_plugins["telescope-fzy-native.nvim"].loaded then
 				vim.cmd([[packadd telescope-fzy-native.nvim]])
 			end
-			if not packer_plugins["sql.nvim"].loaded then
-				vim.cmd([[packadd sql.nvim]])
+			if not packer_plugins["sqlite.lua"].loaded then
+				vim.cmd([[packadd sqlite.lua]])
 			end
 			-- 访问频率排序
 			if not packer_plugins["telescope-frecency.nvim"].loaded then
