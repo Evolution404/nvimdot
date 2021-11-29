@@ -99,6 +99,17 @@ return function(use)
 		"tami5/lspsaga.nvim",
 		opt = true,
 		after = "nvim-lspconfig",
+		config = function()
+			require("lspsaga").init_lsp_saga({
+				finder_action_keys = {
+					open = "o",
+					vsplit = "v",
+					split = "i",
+					quit = "q",
+				},
+        max_preview_lines = 40,
+			})
+		end,
 	})
 
 	-- 在存在code action的行显示一个灯泡符号💡，用来提醒
