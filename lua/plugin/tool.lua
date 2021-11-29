@@ -1,65 +1,4 @@
 return function(use)
-	-- 远程内容复制插件
-	use({
-		"ojroques/vim-oscyank",
-		config = function()
-			vim.cmd([[
-        vnoremap <leader>y :OSCYank<CR>
-        nmap <leader>y <Plug>OSCYank
-      ]])
-		end,
-	})
-
-	-- 命令模式搜索补全
-	use({
-		"gelguy/wilder.nvim",
-		event = "CmdlineEnter",
-		requires = { { "romgrk/fzy-lua-native", after = "wilder.nvim" } },
-		config = function()
-			vim.cmd([[
-        call wilder#setup({'modes': [':', '/', '?']})
-        call wilder#set_option('pipeline', [
-          \   wilder#branch(
-          \     [
-          \       wilder#check({_, x -> empty(x)}),
-          \       wilder#history(),
-          \       {_, x -> filter(x, {_, val -> len(val)>2})},
-          \       wilder#result({'draw': [{_, x -> '📜 ' . x}]}),
-          \     ],
-          \     wilder#search_pipeline({'pattern': 'fuzzy'}),
-          \     wilder#substitute_pipeline(),
-          \     wilder#cmdline_pipeline({'fuzzy': 2, 'fuzzy_filter': wilder#lua_fzy_filter()}),
-          \   )
-          \ ])
-      
-        " 由于切换配色方案后自定义高亮会失效
-        " 所以定义自动命令在切换配色方案后自动重新定义高亮
-        augroup wilderColor
-          autocmd!
-          "autocmd ColorScheme * highlight WilderDefault        guifg=#c5cdd9 guibg=#363a49
-          "autocmd ColorScheme * highlight WilderAccent         guifg=#f4468f guibg=#363a49
-          autocmd ColorScheme * highlight WilderAccent         guifg=#f4468f
-          autocmd ColorScheme * highlight WilderSelected       guifg=White   guibg=#a0c980 gui=italic
-          autocmd ColorScheme * highlight WilderSelectedAccent guifg=Red     guibg=#a0c980 gui=italic
-        augroup END
-        " 在加载插件之后可能没有发生配色切换，所以手动触发
-        doautocmd wilderColor ColorScheme
-        call wilder#set_option('renderer', wilder#popupmenu_renderer(wilder#popupmenu_border_theme({
-          \ 'highlights': {
-          \   'default': 'WilderDefault',
-          \   'accent': 'WilderAccent',
-          \   'selected': 'WilderSelected',
-          \   'selected_accent': 'WilderSelectedAccent',
-          \ },
-          \ 'highlighter': wilder#basic_highlighter(),
-          \ 'left': [wilder#popupmenu_devicons()],
-          \ 'right': [' ', wilder#popupmenu_scrollbar()],
-          \ 'border': 'rounded',
-          \ })))
-      ]])
-		end,
-	})
-
 	-- 模糊搜索插件
 	-- 搜索当前目录的文件名
 	vim.cmd([[nnoremap <leader>ff <cmd>Telescope find_files<cr>]])
@@ -125,6 +64,81 @@ return function(use)
 		opt = true,
 		after = "telescope.nvim",
 		requires = { { "tami5/sqlite.lua", opt = true } },
+	})
+
+	-- 远程内容复制插件
+	use({
+		"ojroques/vim-oscyank",
+		config = function()
+			vim.cmd([[
+        vnoremap <leader>y :OSCYank<CR>
+        nmap <leader>y <Plug>OSCYank
+      ]])
+		end,
+	})
+
+	-- 命令模式搜索补全
+	use({
+		"gelguy/wilder.nvim",
+		event = "CmdlineEnter",
+		requires = { { "romgrk/fzy-lua-native", after = "wilder.nvim" } },
+		config = function()
+			vim.cmd([[
+        call wilder#setup({'modes': [':', '/', '?']})
+        call wilder#set_option('pipeline', [
+          \   wilder#branch(
+          \     [
+          \       wilder#check({_, x -> empty(x)}),
+          \       wilder#history(),
+          \       {_, x -> filter(x, {_, val -> len(val)>2})},
+          \       wilder#result({'draw': [{_, x -> '📜 ' . x}]}),
+          \     ],
+          \     wilder#search_pipeline({'pattern': 'fuzzy'}),
+          \     wilder#substitute_pipeline(),
+          \     wilder#cmdline_pipeline({'fuzzy': 2, 'fuzzy_filter': wilder#lua_fzy_filter()}),
+          \   )
+          \ ])
+      
+        " 由于切换配色方案后自定义高亮会失效
+        " 所以定义自动命令在切换配色方案后自动重新定义高亮
+        augroup wilderColor
+          autocmd!
+          "autocmd ColorScheme * highlight WilderDefault        guifg=#c5cdd9 guibg=#363a49
+          "autocmd ColorScheme * highlight WilderAccent         guifg=#f4468f guibg=#363a49
+          autocmd ColorScheme * highlight WilderAccent         guifg=#f4468f
+          autocmd ColorScheme * highlight WilderSelected       guifg=White   guibg=#a0c980 gui=italic
+          autocmd ColorScheme * highlight WilderSelectedAccent guifg=Red     guibg=#a0c980 gui=italic
+        augroup END
+        " 在加载插件之后可能没有发生配色切换，所以手动触发
+        doautocmd wilderColor ColorScheme
+        call wilder#set_option('renderer', wilder#popupmenu_renderer(wilder#popupmenu_border_theme({
+          \ 'highlights': {
+          \   'default': 'WilderDefault',
+          \   'accent': 'WilderAccent',
+          \   'selected': 'WilderSelected',
+          \   'selected_accent': 'WilderSelectedAccent',
+          \ },
+          \ 'highlighter': wilder#basic_highlighter(),
+          \ 'left': [wilder#popupmenu_devicons()],
+          \ 'right': [' ', wilder#popupmenu_scrollbar()],
+          \ 'border': 'rounded',
+          \ })))
+      ]])
+		end,
+	})
+
+	-- 翻译插件
+	use({
+		"voldikss/vim-translator",
+		setup = function()
+			vim.cmd([[
+      nmap <silent> <Leader>t <Plug>Translate
+      vmap <silent> <Leader>t <Plug>TranslateV
+      nmap <silent> <Leader>w <Plug>TranslateW
+      vmap <silent> <Leader>w <Plug>TranslateWV
+    ]])
+			vim.g.translator_default_engines = { "bing", "haici", "youdao" }
+		end,
 	})
 
 	-- 显示语法错误的列表
