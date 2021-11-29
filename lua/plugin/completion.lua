@@ -99,11 +99,6 @@ return function(use)
 		"tami5/lspsaga.nvim",
 		opt = true,
 		after = "nvim-lspconfig",
-		config = function()
-			local opts = { noremap = true }
-			vim.api.nvim_set_keymap("n", "<leader>t", [[:Lspsaga open_floaterm<CR>]], opts)
-			vim.api.nvim_set_keymap("t", "<leader>t", [[<C-\><C-n>:Lspsaga close_floaterm<CR>]], opts)
-		end,
 	})
 
 	-- 在存在code action的行显示一个灯泡符号💡，用来提醒

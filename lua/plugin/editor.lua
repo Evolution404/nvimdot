@@ -216,8 +216,8 @@ return function(use)
 		config = function()
 			local map = vim.api.nvim_set_keymap
 			local opts = { noremap = true, silent = true }
-			map("n", "<leader>t", [[<cmd>lua require('FTerm').open()<cr>]], opts)
-			map("t", "<leader>t", [[<C-\><C-n><cmd>lua require("FTerm").toggle()<cr>]], opts)
+			map("n", "<F2>", [[<cmd>lua require('FTerm').open()<cr>]], opts)
+			map("t", "<F2>", [[<C-\><C-n><cmd>lua require("FTerm").toggle()<cr>]], opts)
 		end,
 	})
 end
