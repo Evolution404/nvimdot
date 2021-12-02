@@ -34,7 +34,7 @@ require("packer").startup({
 	end,
 	config = {
 		git = {
-			default_url_format = "git@github.com:%s.git", -- Lua format string used for "aaa/bbb" style plugins
+			-- default_url_format = "git@github.com:%s.git", -- Lua format string used for "aaa/bbb" style plugins
 		},
 	},
 })
