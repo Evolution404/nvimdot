@@ -13,4 +13,16 @@ return function(use)
 		--config = conf.lang_org
 	})
 	use({ "iamcco/markdown-preview.nvim", opt = true, ft = "markdown", run = "cd app && yarn install" })
+	use({
+		"fatih/vim-go",
+		opt = true,
+		ft = "go",
+		config = function()
+			vim.cmd([[
+        nnoremap <leader>I :GoImplements<cr>
+        nnoremap <leader>i :GoImports<cr>
+        nnoremap <leader>c :GoCallers<cr>
+      ]])
+		end,
+	})
 end

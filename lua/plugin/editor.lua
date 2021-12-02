@@ -122,9 +122,11 @@ return function(use)
 		-- 使用setup配置，需要在插件启动前修改全局变量
 		setup = function()
 			vim.g.symbols_outline = {
+        width = 50,
 				auto_preview = false,
 				keymaps = {
 					close = "q",
+          goto_location = {"<Cr>", "<2-LeftMouse>"},
 					hover_symbol = "<leader>k",
 				},
 			}
