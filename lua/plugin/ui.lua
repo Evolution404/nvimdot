@@ -130,7 +130,7 @@ return function(use)
 						list = {
 							{ key = ".", cb = tree_cb("toggle_dotfiles") },
 							{ key = "h", cb = tree_cb("dir_up") },
-							{ key = "l", cb = tree_cb("dir_down") },
+							{ key = { "<2-LeftMouse>", "l" }, cb = tree_cb("dir_down") },
 							{ key = "o", cb = tree_cb("cd") },
 							{ key = "<cr>", cb = tree_cb("tabnew") },
 							{ key = "<C-v>", cb = tree_cb("vsplit") },
@@ -342,10 +342,10 @@ return function(use)
 		cmd = "ZenMode",
 		config = function()
 			require("zen-mode").setup({
-        on_open = function()
-          vim.cmd[[set number]]
-        end,
-      })
+				on_open = function()
+					vim.cmd([[set number]])
+				end,
+			})
 		end,
 	})
 
